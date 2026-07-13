@@ -1,0 +1,19 @@
+# Build artifacts
+terraform-provider-dmf
+dist/
+
+# Local Terraform
+.terraform/
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.*
+crash.log
+
+# Go
+*.test
+*.out
+
+# Editors
+.idea/
+.vscode/
+*.swp
