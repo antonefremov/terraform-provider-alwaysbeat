@@ -8,7 +8,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/attr/xattr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"github.com/hashicorp/terraform-plugin-go/tftypes"
 )
@@ -22,10 +21,7 @@ type durationType struct {
 	basetypes.StringType
 }
 
-var (
-	_ basetypes.StringTypable = durationType{}
-	_ xattr.TypeWithValidate  = durationType{}
-)
+var _ basetypes.StringTypable = durationType{}
 
 func (t durationType) String() string { return "provider.durationType" }
 
@@ -54,26 +50,7 @@ func (t durationType) ValueFromTerraform(ctx context.Context, in tftypes.Value) 
 	return durationValue{StringValue: sv}, nil
 }
 
-// Validate rejects a non-empty value that time.ParseDuration can't parse, so
-// bad input fails at plan time with a clear message instead of a later API 400.
-func (t durationType) Validate(_ context.Context, in tftypes.Value, valPath path.Path) diag.Diagnostics {
-	var diags diag.Diagnostics
-	if !in.IsKnown() || in.IsNull() {
-		return diags
-	}
-	var s string
-	if err := in.As(&s); err != nil {
-		diags.AddAttributeError(valPath, "Invalid Duration", err.Error())
-		return diags
-	}
-	if _, err := time.ParseDuration(s); err != nil {
-		diags.AddAttributeError(valPath, "Invalid Duration",
-			fmt.Sprintf("%q is not a valid Go duration (e.g. \"30s\", \"5m\", \"1h30m\"): %s", s, err))
-	}
-	return diags
-}
-
-// durationValue carries the semantic-equality behavior.
+// durationValue carries the semantic-equality and validation behavior.
 type durationValue struct {
 	basetypes.StringValue
 }
@@ -81,7 +58,21 @@ type durationValue struct {
 var (
 	_ basetypes.StringValuable                   = durationValue{}
 	_ basetypes.StringValuableWithSemanticEquals = durationValue{}
+	_ xattr.ValidateableAttribute                = durationValue{}
 )
+
+// ValidateAttribute rejects a non-empty value that time.ParseDuration can't
+// parse, so bad input fails at plan time with a clear message instead of a
+// later API 400. (Replaces the deprecated xattr.TypeWithValidate on the type.)
+func (v durationValue) ValidateAttribute(_ context.Context, req xattr.ValidateAttributeRequest, resp *xattr.ValidateAttributeResponse) {
+	if v.IsNull() || v.IsUnknown() {
+		return
+	}
+	if _, err := time.ParseDuration(v.ValueString()); err != nil {
+		resp.Diagnostics.AddAttributeError(req.Path, "Invalid Duration",
+			fmt.Sprintf("%q is not a valid Go duration (e.g. \"30s\", \"5m\", \"1h30m\"): %s", v.ValueString(), err))
+	}
+}
 
 func (v durationValue) Type(context.Context) attr.Type { return durationType{} }
 

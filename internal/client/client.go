@@ -164,7 +164,7 @@ func (c *Client) do(ctx context.Context, method, path string, body, out any, wan
 	if err != nil {
 		return fmt.Errorf("%s %s: %w", method, path, err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode == http.StatusNotFound {
 		return ErrNotFound
