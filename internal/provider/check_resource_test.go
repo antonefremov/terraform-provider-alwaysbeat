@@ -9,7 +9,7 @@ import (
 )
 
 // TestAccCheckResource covers the resource lifecycle end-to-end against a live
-// API: create, import, and update. Requires TF_ACC=1 + STILLBEAT_API_KEY.
+// API: create, import, and update. Requires TF_ACC=1 + ALWAYSBEAT_API_KEY.
 func TestAccCheckResource(t *testing.T) {
 	name := acctest.RandomWithPrefix("tf-acc")
 
@@ -20,16 +20,16 @@ func TestAccCheckResource(t *testing.T) {
 			{ // create
 				Config: testAccCheckResourceConfig(name, "5m"),
 				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttr("stillbeat_check.test", "name", name),
-					resource.TestCheckResourceAttr("stillbeat_check.test", "grace", "5m"),
-					resource.TestCheckResourceAttr("stillbeat_check.test", "schedule.kind", "interval"),
-					resource.TestCheckResourceAttr("stillbeat_check.test", "paused", "false"),
-					resource.TestCheckResourceAttrSet("stillbeat_check.test", "id"),
-					resource.TestCheckResourceAttrSet("stillbeat_check.test", "ping_url"),
+					resource.TestCheckResourceAttr("alwaysbeat_check.test", "name", name),
+					resource.TestCheckResourceAttr("alwaysbeat_check.test", "grace", "5m"),
+					resource.TestCheckResourceAttr("alwaysbeat_check.test", "schedule.kind", "interval"),
+					resource.TestCheckResourceAttr("alwaysbeat_check.test", "paused", "false"),
+					resource.TestCheckResourceAttrSet("alwaysbeat_check.test", "id"),
+					resource.TestCheckResourceAttrSet("alwaysbeat_check.test", "ping_url"),
 				),
 			},
 			{ // import
-				ResourceName:      "stillbeat_check.test",
+				ResourceName:      "alwaysbeat_check.test",
 				ImportState:       true,
 				ImportStateVerify: true,
 				// Duration attributes use a semantic-equality type: state keeps the
@@ -41,7 +41,7 @@ func TestAccCheckResource(t *testing.T) {
 			},
 			{ // update grace
 				Config: testAccCheckResourceConfig(name, "10m"),
-				Check:  resource.TestCheckResourceAttr("stillbeat_check.test", "grace", "10m"),
+				Check:  resource.TestCheckResourceAttr("alwaysbeat_check.test", "grace", "10m"),
 			},
 		},
 	})
@@ -59,9 +59,9 @@ func TestAccCheckDataSource(t *testing.T) {
 			{
 				Config: testAccCheckDataSourceConfig(name),
 				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttr("data.stillbeat_check.by_id", "name", name),
-					resource.TestCheckResourceAttrPair("data.stillbeat_check.by_id", "id", "stillbeat_check.seed", "id"),
-					resource.TestCheckResourceAttrPair("data.stillbeat_check.by_id", "ping_url", "stillbeat_check.seed", "ping_url"),
+					resource.TestCheckResourceAttr("data.alwaysbeat_check.by_id", "name", name),
+					resource.TestCheckResourceAttrPair("data.alwaysbeat_check.by_id", "id", "alwaysbeat_check.seed", "id"),
+					resource.TestCheckResourceAttrPair("data.alwaysbeat_check.by_id", "ping_url", "alwaysbeat_check.seed", "ping_url"),
 				),
 			},
 		},
@@ -70,7 +70,7 @@ func TestAccCheckDataSource(t *testing.T) {
 
 func testAccCheckResourceConfig(name, grace string) string {
 	return fmt.Sprintf(`
-resource "stillbeat_check" "test" {
+resource "alwaysbeat_check" "test" {
   name = %[1]q
   schedule = {
     kind     = "interval"
@@ -84,7 +84,7 @@ resource "stillbeat_check" "test" {
 
 func testAccCheckDataSourceConfig(name string) string {
 	return fmt.Sprintf(`
-resource "stillbeat_check" "seed" {
+resource "alwaysbeat_check" "seed" {
   name = %[1]q
   schedule = {
     kind     = "interval"
@@ -93,8 +93,8 @@ resource "stillbeat_check" "seed" {
   }
 }
 
-data "stillbeat_check" "by_id" {
-  id = stillbeat_check.seed.id
+data "alwaysbeat_check" "by_id" {
+  id = alwaysbeat_check.seed.id
 }
 `, name)
 }

@@ -1,6 +1,6 @@
-// Package client is a thin HTTP client for the Stillbeat JSON API
+// Package client is a thin HTTP client for the Alwaysbeat JSON API
 // (/api/v1/*). It is intentionally self-contained (no dependency on the closed
-// core's internal packages) so it can later graduate into a public stillbeat-go SDK.
+// core's internal packages) so it can later graduate into a public alwaysbeat-go SDK.
 package client
 
 import (
@@ -16,14 +16,14 @@ import (
 )
 
 // DefaultEndpoint is the production API front door (CloudFront). Overridable
-// via the provider's `endpoint` argument or STILLBEAT_ENDPOINT for staging/local.
+// via the provider's `endpoint` argument or ALWAYSBEAT_ENDPOINT for staging/local.
 const DefaultEndpoint = "https://dn8kvceixrafj.cloudfront.net"
 
 // ErrNotFound is returned by Get/Update/Delete/SetPaused when the check no
 // longer exists (HTTP 404), so the resource layer can drop it from state.
 var ErrNotFound = errors.New("check not found")
 
-// Client talks to one Stillbeat API endpoint with one API key.
+// Client talks to one Alwaysbeat API endpoint with one API key.
 type Client struct {
 	endpoint string // no trailing slash
 	apiKey   string

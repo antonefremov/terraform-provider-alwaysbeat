@@ -1,10 +1,10 @@
-// terraform-provider-stillbeat is the Stillbeat Terraform provider entry
+// terraform-provider-alwaysbeat is the Alwaysbeat Terraform provider entry
 // point. It serves the provider over the plugin protocol; Terraform launches it.
 package main
 
 // Generate the registry documentation under docs/ from the provider schema +
 // examples/. Run with `go generate ./...` or `make docs` (needs terraform).
-//go:generate go run github.com/hashicorp/terraform-plugin-docs/cmd/tfplugindocs generate --provider-name stillbeat
+//go:generate go run github.com/hashicorp/terraform-plugin-docs/cmd/tfplugindocs generate --provider-name alwaysbeat
 
 import (
 	"context"
@@ -13,7 +13,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
 
-	"github.com/antonefremov/terraform-provider-stillbeat/internal/provider"
+	"github.com/antonefremov/terraform-provider-alwaysbeat/internal/provider"
 )
 
 // version is set by the release build (GoReleaser ldflags); "dev" locally.
@@ -25,7 +25,7 @@ func main() {
 	flag.Parse()
 
 	err := providerserver.Serve(context.Background(), provider.New(version), providerserver.ServeOpts{
-		Address: "registry.terraform.io/antonefremov/stillbeat",
+		Address: "registry.terraform.io/antonefremov/alwaysbeat",
 		Debug:   debug,
 	})
 	if err != nil {

@@ -1,4 +1,4 @@
-module github.com/antonefremov/terraform-provider-stillbeat
+module github.com/antonefremov/terraform-provider-alwaysbeat
 
 go 1.26.5
 

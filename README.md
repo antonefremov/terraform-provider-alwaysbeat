@@ -1,10 +1,10 @@
-# Terraform Provider for Stillbeat
+# Terraform Provider for Alwaysbeat
 
-Manage [Stillbeat](https://stillbeat.app) cron / heartbeat checks as
+Manage [Alwaysbeat](https://alwaysbeat.com) cron / heartbeat checks as
 code. Define your monitored jobs in Terraform; wire the generated `ping_url`
 straight into the cron/CI job that pings it.
 
-> Status: **v0.1.0 (early)** — the `stillbeat_check` resource with full CRUD + import.
+> Status: **v0.1.0 (early)** — the `alwaysbeat_check` resource with full CRUD + import.
 > Data sources and additional resources are planned.
 
 ## Usage
@@ -12,18 +12,18 @@ straight into the cron/CI job that pings it.
 ```hcl
 terraform {
   required_providers {
-    stillbeat = {
-      source  = "antonefremov/stillbeat"
+    alwaysbeat = {
+      source  = "antonefremov/alwaysbeat"
       version = "~> 0.1"
     }
   }
 }
 
-provider "stillbeat" {
-  # api_key via STILLBEAT_API_KEY (recommended); endpoint defaults to production.
+provider "alwaysbeat" {
+  # api_key via ALWAYSBEAT_API_KEY (recommended); endpoint defaults to production.
 }
 
-resource "stillbeat_check" "nightly_backup" {
+resource "alwaysbeat_check" "nightly_backup" {
   name = "nightly-backup"
 
   schedule = {
@@ -37,7 +37,7 @@ resource "stillbeat_check" "nightly_backup" {
 }
 
 output "ping_url" {
-  value = stillbeat_check.nightly_backup.ping_url
+  value = alwaysbeat_check.nightly_backup.ping_url
 }
 ```
 
@@ -51,23 +51,23 @@ run-my-backup && curl -fsS "$(terraform output -raw ping_url)"
 
 Create an API key in the dashboard under **API keys**, then either:
 
-- set `STILLBEAT_API_KEY=dmf_...` in the environment (preferred — keeps it out of
+- set `ALWAYSBEAT_API_KEY=dmf_...` in the environment (preferred — keeps it out of
   config and state), or
-- pass `api_key` in the `provider "stillbeat"` block.
+- pass `api_key` in the `provider "alwaysbeat"` block.
 
 ## Provider configuration
 
 | Argument   | Env           | Default            | Description                                   |
 |------------|---------------|--------------------|-----------------------------------------------|
-| `api_key`  | `STILLBEAT_API_KEY` | —                  | Stillbeat API key (`dmf_...`). Required.            |
-| `endpoint` | `STILLBEAT_ENDPOINT`| production API URL | API base URL; override for staging/local.     |
+| `api_key`  | `ALWAYSBEAT_API_KEY` | —                  | Alwaysbeat API key (`dmf_...`). Required.            |
+| `endpoint` | `ALWAYSBEAT_ENDPOINT`| production API URL | API base URL; override for staging/local.     |
 
-## `stillbeat_check`
+## `alwaysbeat_check`
 
 Durations are Go duration strings (`"30s"`, `"5m"`, `"1h30m"`). Import with:
 
 ```sh
-terraform import stillbeat_check.nightly_backup <check_id>
+terraform import alwaysbeat_check.nightly_backup <check_id>
 ```
 
 See [`examples/`](./examples) and the generated [`docs/`](./docs).
@@ -77,11 +77,11 @@ See [`examples/`](./examples) and the generated [`docs/`](./docs).
 ```sh
 make build    # go install
 make test     # unit tests (no network)
-make testacc  # acceptance tests — set TF_ACC=1, STILLBEAT_API_KEY, STILLBEAT_ENDPOINT (STAGING!)
+make testacc  # acceptance tests — set TF_ACC=1, ALWAYSBEAT_API_KEY, ALWAYSBEAT_ENDPOINT (STAGING!)
 make docs     # regenerate docs/ (requires tfplugindocs)
 ```
 
-Acceptance tests create and destroy real checks — always point `STILLBEAT_ENDPOINT`
+Acceptance tests create and destroy real checks — always point `ALWAYSBEAT_ENDPOINT`
 at **staging**, never production.
 
 ## License

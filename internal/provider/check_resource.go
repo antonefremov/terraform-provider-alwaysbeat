@@ -16,7 +16,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	"github.com/antonefremov/terraform-provider-stillbeat/internal/client"
+	"github.com/antonefremov/terraform-provider-alwaysbeat/internal/client"
 )
 
 var (
@@ -41,7 +41,7 @@ type scheduleModel struct {
 	TZ       types.String  `tfsdk:"tz"`
 }
 
-// checkModel maps the stillbeat_check resource state.
+// checkModel maps the alwaysbeat_check resource state.
 type checkModel struct {
 	ID           types.String  `tfsdk:"id"`
 	Name         types.String  `tfsdk:"name"`
