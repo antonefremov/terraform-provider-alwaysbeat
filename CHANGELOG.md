@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.1
+## 0.1.2
 
 BUG FIXES:
 
@@ -9,6 +9,10 @@ BUG FIXES:
   `id` from config and builds the remaining (computed) attributes from the API,
   instead of decoding null nested attributes into non-nullable structs. The
   `alwaysbeat_check` resource was unaffected.
+
+  (This is the same fix intended for 0.1.1, which is unusable on the registry —
+  its release was re-cut after publish, so the recorded checksums no longer match
+  the binaries. Use 0.1.2.)
 
 ## 0.1.0
 
